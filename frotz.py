@@ -124,19 +124,27 @@ class Session(object):
         intro_lines = []
         output_lines = []
 
-        for idx, line in enumerate(lines):
-            line = line.replace('> > ', '')
-            if line.startswith('@'):
-                continue
+        with open('/tmp/ztest.log', 'w') as out:
+            import json
+            out.write(json.dumps(info) + '\n')
 
-            if idx < info['header'] - 1:
-                intro_lines.append(line)
-            elif idx < info['header'] + info['load']:
-                pass
-            elif idx + info['save'] >= idx + 1:
-                pass
-            else:
-                output_lines.append(line)
+            for idx, line in enumerate(lines):
+                line = line.replace('> > ', '')
+                if line.startswith('@'):
+                    continue
+
+                if idx < info['header'] - 1:
+                    out.write('header: %s\n' % line)
+                    intro_lines.append(line)
+                elif idx < info['header'] + info['load']:
+                    out.write('load: %s\n' % line)
+                    pass
+                elif idx + info['save'] >= idx + 1:
+                    out.write('save: %s\n' % line)
+                    pass
+                else:
+                    out.write('output: %s\n' % line)
+                    output_lines.append(line)
 
         state = {
             'raw': output,
