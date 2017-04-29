@@ -55,7 +55,7 @@ def play(data_id, session_id):
                 message['text']
             ])
     except Exception as e:
-        return jsonify({'text': str(e)})
+        return jsonify({'text': traceback.format_exc()})
 
     with open('/tmp/ztest.json', 'w') as out:
         import json
