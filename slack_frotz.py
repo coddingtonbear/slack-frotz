@@ -52,7 +52,7 @@ def play(data_id, session_id):
         if not state['had_previous_save']:
             message['text'] = state['intro'] + '\n\n' + message['text']
     except Exception as e:
-        return jsonify({'text': str(e))
+        return jsonify({'text': str(e)})
 
     with open('/tmp/ztest.json', 'w') as out:
         import json
