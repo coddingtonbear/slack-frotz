@@ -2,7 +2,7 @@ import os
 import re
 import subprocess32 as subprocess
 
-from . import config
+import config
 
 
 class FrotzError(Exception):

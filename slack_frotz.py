@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 
-from . import frotz
+import frotz
 
 
 app = Flask(__name__)
