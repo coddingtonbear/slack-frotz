@@ -1,4 +1,4 @@
-FROTZ_EXE_PATH = '/var/www/frotz/dfrotz'
+FROTZ_EXE_PATH = '/usr/local/bin/dfrotz'
 FROTZ_SAVE_PATH = '/var/www/frotz/saves'
 FROTZ_DATA_MAP = {
     'zork1': {
