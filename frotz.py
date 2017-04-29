@@ -155,13 +155,13 @@ class Session(object):
             parts = re.split(r'\s+', output_lines[0])
             state['moves'] = int(parts[-1])
             state['score'] = int(parts[-3])
-            state['location'] = ' '.join(parts[1:4])
-            state['title'] = output_lines[1].strip()
-            state['message'] = '\n'.join(output_lines[2:])
+            state['location'] = ' '.join(parts[1:4]).strip()
+            state['title'] = output_lines[1].strip().strip()
+            state['message'] = '\n'.join(output_lines[2:]).strip()
         else:
             state['error'] = True
 
-        state['output'] = '\n'.join(output_lines)
-        state['intro'] = '\n'.join(intro_lines)
+        state['output'] = '\n'.join(output_lines).strip()
+        state['intro'] = '\n'.join(intro_lines).strip()
 
         return state

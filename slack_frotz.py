@@ -42,6 +42,7 @@ def play(data_id, session_id):
     message = {
         'title': state['title'],
         'text': state['message'],
+        'fallback': state['title'],
     }
 
     if not state['had_previous_save']:
