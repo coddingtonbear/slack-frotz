@@ -8,10 +8,10 @@ import frotz
 
 
 app = Flask(__name__)
-logging.basicConfig(
-    filename=config.LOG_OUTPUT,
-    loglevel=logging.DEBUG,
-)
+if not app.debug:
+    file_handler = logging.FileHandler(config.LOG_OUTPUT)
+    file_handler.setLevel(logging.WARNING)
+    app.logger.addHandler(file_handler)
 
 
 @app.route("/")
