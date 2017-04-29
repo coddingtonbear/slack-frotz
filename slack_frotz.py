@@ -11,7 +11,7 @@ def index():
     return "OK"
 
 
-@app.route("/play/<data_id>/<session_id>")
+@app.route("/play/<data_id>/<session_id>", methods=['POST'])
 def play(data_id, session_id):
     command = request.form['text'].strip()
     if 'trigger_word' in request.form:
