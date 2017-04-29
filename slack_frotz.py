@@ -21,7 +21,7 @@ def index():
 
 @app.route("/play/<data_id>/<session_id>", methods=['POST'])
 def play(data_id, session_id):
-    logging.info(
+    app.logger.info(
         'Incoming request for %s:%s',
         data_id,
         session_id,
