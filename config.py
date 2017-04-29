@@ -4,7 +4,7 @@ FROTZ_DATA_MAP = {
     'zork1': {
         'path': '/var/www/frotz/data/ZORK1.DAT',
         'header': 13,
-        'load': 4,
+        'load': 6,
         'save': 3,
     }
 }
