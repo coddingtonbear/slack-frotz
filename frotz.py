@@ -151,6 +151,9 @@ class Session(object):
         state = {
             'raw': output,
             'had_previous_save': had_previous_save,
+            'message': '',
+            'title': '',
+            'location': '',
         }
 
         if 'Score:' in output_lines[0] and 'Moves:' in output_lines[0]:
