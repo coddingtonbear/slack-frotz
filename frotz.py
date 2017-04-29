@@ -136,7 +136,7 @@ class Session(object):
                 if idx < info['header'] - 1:
                     out.write('header: %s\n' % line)
                     intro_lines.append(line)
-                elif idx < info['header'] + info['load']:
+                elif idx < info['header'] + info['load'] - 1:
                     out.write('load: %s\n' % line)
                     pass
                 elif idx + info['save'] >= idx + 1:
