@@ -1,3 +1,5 @@
+import traceback
+
 from flask import Flask, jsonify, request
 
 import frotz
@@ -34,7 +36,7 @@ def play(data_id, session_id):
     except Exception as e:
         return jsonify({
             'title': 'Exception',
-            'text': unicode(e)
+            'text': traceback.format_exc()
         })
 
     if not state['had_previous_save']:
