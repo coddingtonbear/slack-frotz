@@ -90,6 +90,7 @@ class Session(object):
                 info['path'],
             ],
             stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             stdin=subprocess.PIPE,
         )
         try:
