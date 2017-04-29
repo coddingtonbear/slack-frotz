@@ -170,6 +170,6 @@ class Session(object):
             state['error'] = True
 
         state['output'] = '\n'.join(output_lines).strip()
-        state['intro_lines'] = intro_lines
+        state['intro'] = '\n'.join(intro_lines).strip()
 
         return state

@@ -35,8 +35,8 @@ def play(data_id, session_id):
 
         if not state['had_previous_save']:
             message['text'] = '\n\n'.join([
-                '\n'.join(['*' + line + '*' for line in state['intro_lines']]),
-                message['text']
+                state['intro'],
+                message['text'],
             ])
 
         return jsonify(message)
@@ -57,5 +57,5 @@ def play(data_id, session_id):
         })
 
     return jsonify({
-        'text': 'A...surprise...has occurred; try again.'
+        'text': 'A...surprise...has occurred; contact @coddingtonbear'
     })
