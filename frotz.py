@@ -97,6 +97,8 @@ class Session(object):
                 self._build_command(command),
                 timeout=5
             )
+            if proc.status_code != 0:
+                raise FrotzError(err)
         except subprocess.TimeoutExpired:
             proc.kill()
             output, err = proc.communicate()
