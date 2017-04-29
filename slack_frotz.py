@@ -23,6 +23,23 @@ def play(data_id, session_id):
 
     try:
         state = session.input(command)
+
+        message = {
+            'text': state['message'],
+        }
+        if state['title']:
+            message['text'] = u'*{title}*\n{message}'.format(
+                title=state['title'],
+                message=state['message']
+            )
+
+        if not state['had_previous_save']:
+            message['text'] = '\n\n'.join([
+                '*' + state['intro'] + '*',
+                message['text']
+            ])
+
+        return jsonify(message)
     except frotz.SessionReset:
         return jsonify({
             'title': 'Game Reset',
@@ -39,26 +56,7 @@ def play(data_id, session_id):
             'text': traceback.format_exc()
         })
 
-    message = {
-        'text': state['message'],
-    }
-    if state['title']:
-        message['text'] = u'*{title}*\n{message}'.format(
-            title=state['title'],
-            message=state['message']
-        )
 
-    try:
-        if not state['had_previous_save']:
-            message['text'] = '\n\n'.join([
-                '*' + state['intro'] + '*',
-                message['text']
-            ])
-    except Exception as e:
-        return jsonify({'text': traceback.format_exc()})
-
-    with open('/tmp/ztest.json', 'w') as out:
-        import json
-        out.write(json.dumps(message, indent=4, sort_keys=True))
-
-    return jsonify(message)
+    return jsonify({
+        'text': 'A...surprise...has occurred; try again.'
+    })
