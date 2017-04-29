@@ -35,7 +35,7 @@ def play(data_id, session_id):
 
         if not state['had_previous_save']:
             message['text'] = '\n\n'.join([
-                '*' + state['intro'] + '*',
+                '\n'.join(['*' + line + '*' for line in state['intro_lines']]),
                 message['text']
             ])
 
@@ -55,7 +55,6 @@ def play(data_id, session_id):
             'title': 'Exception',
             'text': traceback.format_exc()
         })
-
 
     return jsonify({
         'text': 'A...surprise...has occurred; try again.'
