@@ -50,7 +50,10 @@ def play(data_id, session_id):
 
     try:
         if not state['had_previous_save']:
-            message['text'] = state['intro'] + '\n\n' + message['text']
+            message['text'] = '\n\n'.join([
+                [u'*{line}*'.format(line) for line in state['intro']],
+                message['text']
+            ])
     except Exception as e:
         return jsonify({'text': str(e)})
 
