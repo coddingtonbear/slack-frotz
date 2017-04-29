@@ -139,7 +139,7 @@ class Session(object):
                 elif idx < info['header'] + info['load'] - 1:
                     out.write('load: %s\n' % line)
                     pass
-                elif idx + info['save'] >= idx + 1:
+                elif idx + info['save'] >= count(lines) + 1:
                     out.write('save: %s\n' % line)
                     pass
                 else:
