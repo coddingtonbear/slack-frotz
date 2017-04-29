@@ -98,7 +98,6 @@ class Session(object):
                 self._build_command(command),
                 timeout=5
             )
-            raise Exception(output)
             if proc.returncode != 0:
                 raise FrotzError(err)
         except subprocess.TimeoutExpired:
@@ -143,6 +142,8 @@ class Session(object):
             'raw': output,
             'had_previous_save': had_previous_save,
         }
+
+        raise Exception(output_lines)
 
         if 'Score:' in output_lines[0] and 'Moves:' in output_lines[0]:
             parts = re.split(r'\s+', output_lines[0])
