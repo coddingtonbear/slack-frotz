@@ -37,7 +37,12 @@ def play(data_id, session_id):
             'text': unicode(e)
         })
 
+    if not state['had_previous_save']:
+        message = state['intro'] + '\n\n' + state['message']
+    else:
+        message = state['message']
+
     return jsonify({
         'title': state['title'],
-        'text': state['message'],
+        'text': message,
     })

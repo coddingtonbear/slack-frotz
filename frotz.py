@@ -78,7 +78,7 @@ class Session(object):
         info = self.get_data_info()
 
         had_previous_save = False
-        if os.path.exists(save_path):
+        if os.path.exists(self.get_save_path()):
             had_previous_save = True
 
         proc = subprocess.Popen(
@@ -110,9 +110,10 @@ class Session(object):
         return self._get_state_data(
             output,
             err,
+            had_previous_save=had_previous_save
         )
 
-    def _get_state_data(self, output, err):
+    def _get_state_data(self, output, err, had_previous_save=False):
         info = self.get_data_info()
 
         lines = output.split('\n')
@@ -136,6 +137,7 @@ class Session(object):
 
         state = {
             'raw': output,
+            'had_previous_save': had_previous_save,
         }
 
         if 'Score:' in output_lines[0] and 'Moves:' in output_lines[0]:
