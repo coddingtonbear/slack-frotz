@@ -72,7 +72,7 @@ class Session(object):
         if os.path.exists(save_path):
             cmd_parts.append('y')
 
-        return '\n'.join(cmd_parts)
+        return '\n'.join(cmd_parts) + '\n'
 
     def _execute(self, command):
         info = self.get_data_info()
