@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess32 as subprocess
 
 from . import config
@@ -16,8 +17,16 @@ class CommandTimeout(FrotzError):
     pass
 
 
+class Reset(Exception):
+    pass
+
+
 class Response(object):
-    def __init__(self, message, title=None):
+    def __init__(
+        self,
+        message,
+        title=None,
+    ):
         self._message = message
         self._title = title
 
@@ -30,7 +39,7 @@ class Session(object):
     def get_save_path(self):
         return os.path.join(
             config.FROTZ_SAVE_PATH,
-            self._session_id + '.zsav',
+            self._data_id + '__' + self._session_id + '.zsav',
         )
 
     def get_data_info(self):
@@ -43,10 +52,7 @@ class Session(object):
             )
 
         if command in ['reset', 'restart']:
-            return Response(
-                'Your game has been reset. Enjoy!',
-                title='Game Reset',
-            )
+            raise Reset()
 
         return self._execute(command)
 
@@ -100,35 +106,48 @@ class Session(object):
                 )
             )
 
-        return self._generate_response(
+        return self._get_state_data(
             output,
             err,
-            show_intro=not had_previous_save,
         )
 
-    def _generate_response(self, output, err, show_intro=False):
+    def _get_state_data(self, output, err):
         info = self.get_data_info()
 
         lines = output.split('\n')
 
-        if show_intro:
-            lines[0] = lines[0].replace('> >', '')
-            lines.pop(1)
-
-        final = []
+        intro_lines = []
+        output_lines = []
 
         for idx, line in enumerate(lines):
             line = line.replace('> > ', '')
             if line.startswith('@'):
                 continue
 
-            if idx < info['header'] -1 and show_intro:
-                final.append(line)
+            if idx < info['header'] - 1:
+                intro_lines.append(line)
             elif idx < info['header'] + info['load']:
                 pass
-            elif not show_intro and idx + info['save'] >= idx + 1:
+            elif idx + info['save'] >= idx + 1:
                 pass
             else:
-                final.append(line)
+                output_lines.append(line)
 
-        return Response('\n'.join(final))
+        state = {
+            'raw': output,
+        }
+
+        if 'Score:' in output_lines[0] and 'Moves:' in output_lines[0]:
+            parts = re.split(r'\s+', output_lines[0])
+            state['moves'] = int(parts[-1])
+            state['score'] = int(parts[-3])
+            state['location'] = ' '.join(parts[1:4])
+            state['title'] = output_lines[1].strip()
+            state['message'] = '\n'.join(output_lines[2:])
+        else:
+            state['error'] = True
+
+        state['output'] = '\n'.join(output_lines)
+        state['intro'] = '\n'.join(intro_lines)
+
+        return state

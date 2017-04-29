@@ -1,6 +1,6 @@
-from flask import Flask, request
+from flask import Flask, jsonify, request
 
-from . import config, frotz
+from . import frotz
 
 
 app = Flask(__name__)
@@ -11,19 +11,33 @@ def index():
     return "OK"
 
 
-@app.route("/play")
-def play():
-    session_id = request.args['session_id']
-    data_id = request.args['data_id']
-
+@app.route("/play/<data_id>/<session_id>")
+def play(data_id, session_id):
     command = request.form['text'].strip()
+    if 'trigger_word' in request.form:
+        command = command[len(request.form['trigger_word']) + 1:].strip()
 
     session = frotz.Session(data_id, session_id)
 
     try:
-        response = session.input(command)
-    except frotz.Error:
-        pass
+        state = session.input(command)
+    except frotz.Reset:
+        return jsonify({
+            'title': 'Game Reset',
+            'text': 'Your game has been reset.',
+        })
+    except frotz.Error as e:
+        return jsonify({
+            'title': 'Frotz Error',
+            'text': unicode(e)
+        })
+    except Exception as e:
+        return jsonify({
+            'title': 'Exception',
+            'text': unicode(e)
+        })
 
-    if response:
-        pass
+    return jsonify({
+        'title': state['title'],
+        'text': state['message'],
+    })
