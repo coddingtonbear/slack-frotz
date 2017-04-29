@@ -21,12 +21,12 @@ def play(data_id, session_id):
 
     try:
         state = session.input(command)
-    except frotz.Reset:
+    except frotz.SessionReset:
         return jsonify({
             'title': 'Game Reset',
             'text': 'Your game has been reset.',
         })
-    except frotz.Error as e:
+    except frotz.FrotzError as e:
         return jsonify({
             'title': 'Frotz Error',
             'text': unicode(e)

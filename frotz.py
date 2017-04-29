@@ -17,7 +17,7 @@ class CommandTimeout(FrotzError):
     pass
 
 
-class Reset(Exception):
+class SessionReset(Exception):
     pass
 
 
@@ -52,7 +52,8 @@ class Session(object):
             )
 
         if command in ['reset', 'restart']:
-            raise Reset()
+            os.unlink(self.get_save_path())
+            raise SessionReset()
 
         return self._execute(command)
 
