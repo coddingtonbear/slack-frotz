@@ -39,12 +39,16 @@ def play(data_id, session_id):
             'text': traceback.format_exc()
         })
 
-    if not state['had_previous_save']:
-        message = state['intro'] + '\n\n' + state['message']
-    else:
-        message = state['message']
-
-    return jsonify({
+    message = {
         'title': state['title'],
-        'text': message,
-    })
+        'text': state['message'],
+    }
+
+    if not state['had_previous_save']:
+        state['message'] = state['intro'] + '\n\n' + state['message']
+
+    with open('/tmp/ztest.json', 'w') as out:
+        import json
+        out.write(json.dumps(message))
+
+    return jsonify(message)
