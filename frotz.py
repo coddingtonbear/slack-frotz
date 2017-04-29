@@ -133,7 +133,9 @@ class Session(object):
                 if line.startswith('@'):
                     continue
 
-                if idx < info['header'] - 1:
+                if idx < 2:
+                    continue
+                elif idx < info['header'] - 1:
                     out.write('header: %s\n' % line)
                     intro_lines.append(line)
                 elif idx < info['header'] + info['load'] - 1:
@@ -158,6 +160,9 @@ class Session(object):
             state['location'] = ' '.join(parts[1:4]).strip()
             state['title'] = output_lines[1].strip().strip()
             state['message'] = '\n'.join(output_lines[2:]).strip()
+            if not state['message']:
+                state['message'] = state['title']
+                state['title'] = None
         else:
             state['error'] = True
 

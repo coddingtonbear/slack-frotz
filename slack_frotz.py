@@ -40,16 +40,19 @@ def play(data_id, session_id):
         })
 
     message = {
-        'title': state['title'],
         'text': state['message'],
-        'fallback': state['title'],
     }
+    if state['title']:
+        message['text'] = u'*{title}*\n{message}'.format(
+            title=state['title'],
+            message=state['message']
+        )
 
     if not state['had_previous_save']:
-        state['message'] = state['intro'] + '\n\n' + state['message']
+        message['text'] = state['intro'] + '\n\n' + message['text']
 
     with open('/tmp/ztest.json', 'w') as out:
         import json
-        out.write(json.dumps(message))
+        out.write(json.dumps(message, indent=4, sort_keys=True))
 
     return jsonify(message)
