@@ -143,7 +143,7 @@ class Session(object):
             'had_previous_save': had_previous_save,
         }
 
-        raise Exception(output_lines)
+        raise Exception(lines)
 
         if 'Score:' in output_lines[0] and 'Moves:' in output_lines[0]:
             parts = re.split(r'\s+', output_lines[0])
