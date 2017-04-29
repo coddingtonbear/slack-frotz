@@ -1,11 +1,18 @@
+import logging
 import traceback
 
 from flask import Flask, jsonify, request
 
+import config
 import frotz
 
 
 app = Flask(__name__)
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    filename=config.LOG_OUTPUT,
+    loglevel=logging.DEBUG,
+)
 
 
 @app.route("/")
@@ -15,6 +22,11 @@ def index():
 
 @app.route("/play/<data_id>/<session_id>", methods=['POST'])
 def play(data_id, session_id):
+    logger.info(
+        'Incoming request for %s:%s',
+        data_id,
+        session_id,
+    )
     command = request.form['text'].strip()
     if 'trigger_word' in request.form:
         command = command[len(request.form['trigger_word']) + 1:].strip()

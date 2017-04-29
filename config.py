@@ -8,3 +8,4 @@ FROTZ_DATA_MAP = {
         'save': 3,
     }
 }
+LOG_OUTPUT = '/var/www/frotz/frotz_py.log'
