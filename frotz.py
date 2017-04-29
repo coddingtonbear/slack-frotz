@@ -124,34 +124,24 @@ class Session(object):
         intro_lines = []
         output_lines = []
 
-        with open('/tmp/ztest.log', 'w') as out:
-            import json
-            out.write(json.dumps(info) + '\n')
+        for idx, line in enumerate(lines):
+            line = line.replace('> > ', '')
+            if line.startswith('@'):
+                continue
 
-            for idx, line in enumerate(lines):
-                line = line.replace('> > ', '')
-                if line.startswith('@'):
-                    continue
-
-                if idx < info['header'] - 1:
-                    out.write('header: %s\n' % line)
-                    intro_lines.append(line)
-                elif idx < info['header'] + info['load'] - 1:
-                    out.write('load: %s\n' % line)
-                    pass
-                elif idx + info['save'] >= len(lines) + 1:
-                    out.write('save: %s\n' % line)
-                    pass
-                else:
-                    out.write('output: %s\n' % line)
-                    output_lines.append(line)
+            if idx < info['header'] - 1:
+                intro_lines.append(line)
+            elif idx < info['header'] + info['load'] - 1:
+                pass
+            elif idx + info['save'] >= len(lines) + 1:
+                pass
+            else:
+                output_lines.append(line)
 
         state = {
             'raw': output,
             'had_previous_save': had_previous_save,
         }
-
-        raise Exception(lines)
 
         if 'Score:' in output_lines[0] and 'Moves:' in output_lines[0]:
             parts = re.split(r'\s+', output_lines[0])
