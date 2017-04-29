@@ -10,7 +10,7 @@ import frotz
 app = Flask(__name__)
 if not app.debug:
     file_handler = logging.FileHandler(config.LOG_OUTPUT)
-    file_handler.setLevel(logging.WARNING)
+    file_handler.setLevel(logging.DEBUG)
     app.logger.addHandler(file_handler)
 
 
