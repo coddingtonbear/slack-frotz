@@ -13,6 +13,14 @@ def index():
     return "OK"
 
 
+@app.route("/manual/<data_id>/<session_id>/<command>", methods=['POST', 'GET'])
+def manual(data_id, session_id, command):
+    session = frotz.Session(data_id, session_id)
+    state = session.input(command)
+
+    return jsonify(state)
+
+
 @app.route("/play/<data_id>/<session_id>", methods=['POST'])
 def play(data_id, session_id):
     command = request.form['text'].strip()
@@ -20,6 +28,8 @@ def play(data_id, session_id):
         command = command[len(request.form['trigger_word']) + 1:].strip()
 
     session = frotz.Session(data_id, session_id)
+
+    message = {}
 
     try:
         state = session.input(command)
@@ -33,13 +43,6 @@ def play(data_id, session_id):
                 message=state['message']
             )
 
-        if not state['had_previous_save']:
-            message['text'] = '\n\n'.join([
-                state['intro'],
-                message['text'],
-            ])
-
-        return jsonify(message)
     except frotz.SessionReset:
         return jsonify({
             'title': 'Game Reset',
@@ -56,6 +59,4 @@ def play(data_id, session_id):
             'text': traceback.format_exc()
         })
 
-    return jsonify({
-        'text': 'A...surprise...has occurred; contact @coddingtonbear'
-    })
+    return jsonify(message)

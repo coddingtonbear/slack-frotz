@@ -1,5 +1,7 @@
+import datetime
 import os
 import re
+import shutil
 import subprocess32 as subprocess
 
 import config
@@ -52,41 +54,41 @@ class Session(object):
             )
 
         if command in ['reset', 'restart']:
+            filename, ext = os.path.splitext(self.get_save_path())
+            shutil.copyfile(
+                self.get_save_path(),
+                '%s.%s.%s' % (
+                    filename,
+                    datetime.datetime.now().strftime('%Y%m%d%H%M%SZ'),
+                    ext,
+                )
+            )
             os.unlink(self.get_save_path())
             raise SessionReset()
 
         return self._execute(command)
 
     def _build_command(self, command):
-        save_path = self.get_save_path()
-
         cmd_parts = [
-            'restore',
-            save_path,
-            '\\lt',
-            '\\cm\\w',
             command.encode('utf8'),
             'save',
-            save_path,
         ]
-        if os.path.exists(save_path):
-            cmd_parts.append('y')
 
         return '\n'.join(cmd_parts) + '\n'
 
     def _execute(self, command):
         info = self.get_data_info()
 
-        had_previous_save = False
-        if os.path.exists(self.get_save_path()):
-            had_previous_save = True
-
         proc = subprocess.Popen(
             [
                 config.FROTZ_EXE_PATH,
+                '-J',
+                '-r', 'lt',
+                '-r', 'cm',
+                '-r', 'w',
                 '-i',
-                '-Z',
-                '0',
+                '-Z', '0',
+                '-R', self.get_save_path(),
                 info['path'],
             ],
             stdout=subprocess.PIPE,
@@ -113,44 +115,18 @@ class Session(object):
         return self._get_state_data(
             output,
             err,
-            had_previous_save=had_previous_save
+
         )
 
-    def _get_state_data(self, output, err, had_previous_save=False):
-        info = self.get_data_info()
-
-        lines = output.split('\n')
-
-        intro_lines = []
-        output_lines = []
-
-        with open('/tmp/ztest.log', 'w') as out:
-            import json
-            out.write(json.dumps(info) + '\n')
-
-            for idx, line in enumerate(lines):
-                line = line.replace('> > ', '')
-                if line.startswith('@'):
-                    continue
-
-                if idx < 2:
-                    continue
-                elif idx < info['header'] - 1:
-                    out.write('header: %s\n' % line)
-                    intro_lines.append(line)
-                elif idx < info['header'] + info['load'] - 1:
-                    out.write('load: %s\n' % line)
-                    pass
-                elif idx + info['save'] >= len(lines) + 1:
-                    out.write('save: %s\n' % line)
-                    pass
-                else:
-                    out.write('output: %s\n' % line)
-                    output_lines.append(line)
+    def _get_state_data(self, raw_output, err):
+        output = raw_output[
+            raw_output.find('>')+1:
+            raw_output.rfind('>', 0, len(raw_output) - 1)
+        ]
+        output_lines = output.split('\n')
 
         state = {
             'raw': output,
-            'had_previous_save': had_previous_save,
             'message': '',
             'title': '',
             'location': '',
@@ -160,7 +136,7 @@ class Session(object):
             parts = re.split(r'\s+', output_lines[0])
             state['moves'] = int(parts[-1])
             state['score'] = int(parts[-3])
-            state['location'] = ' '.join(parts[1:4]).strip()
+            state['location'] = ' '.join(parts[1:-4]).strip()
             state['title'] = output_lines[1].strip().strip()
             state['message'] = '\n'.join(output_lines[2:]).strip()
             if not state['message']:
@@ -168,8 +144,5 @@ class Session(object):
                 state['title'] = None
         else:
             state['error'] = True
-
-        state['output'] = '\n'.join(output_lines).strip()
-        state['intro'] = '\n'.join(intro_lines).strip()
 
         return state
