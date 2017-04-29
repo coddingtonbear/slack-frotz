@@ -8,7 +8,6 @@ import frotz
 
 
 app = Flask(__name__)
-logger = logging.getLogger(__name__)
 logging.basicConfig(
     filename=config.LOG_OUTPUT,
     loglevel=logging.DEBUG,
@@ -22,7 +21,7 @@ def index():
 
 @app.route("/play/<data_id>/<session_id>", methods=['POST'])
 def play(data_id, session_id):
-    logger.info(
+    logging.info(
         'Incoming request for %s:%s',
         data_id,
         session_id,
