@@ -143,6 +143,7 @@ class Session(object):
                 state['message'] = state['title']
                 state['title'] = None
         else:
+            state['message'] = output
             state['error'] = True
 
         return state
